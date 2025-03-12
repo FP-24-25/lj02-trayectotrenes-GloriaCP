@@ -2,92 +2,145 @@ package fp.trenes;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class TrayectoTrenImpl implements TrayectoTren {
+public class TrayectoTrenImpl implements TrayectoTren,Comparable<TrayectoTren> {
+	
+	//Atributos
 	private String codigoTren;
 	private String nombre;
 	private TipoTren tipo;
 	private List <String> estaciones;
 	private List <LocalTime> horasSalida;
 	private List <LocalTime> horasLlegada;
+	
+	//Constructor(es)
+	public TrayectoTrenImpl(
+			String codigoTren,
+			String nombre,
+			TipoTren tipo,
+			String estacionOrigen,
+			String estacionFinal,
+			LocalTime horaSalida,
+			LocalTime horaLlegada
+			) {
+		this.codigoTren=codigoTren;
+		this.nombre=nombre;
+		this.tipo=tipo;
+		this.estaciones=new ArrayList<>();
+		Collections.addAll(this.estaciones, estacionOrigen,estacionFinal);
+		this.horasSalida= new ArrayList<>();
+		Collections.addAll(this.horasSalida,horaSalida,null);
+		this.horasLlegada= new ArrayList<>();
+		Collections.addAll(this.horasLlegada,null,horaLlegada);
+		
+	}
 
-	@Override
+	
+	//Getters
 	public String getCodigoTren() {
-		// TODO Auto-generated method stub
-		return null;
+		return codigoTren;
 	}
 
-	@Override
+
 	public String getNombre() {
-		// TODO Auto-generated method stub
-		return null;
+		return nombre;
 	}
 
-	@Override
+	
 	public TipoTren getTipo() {
-		// TODO Auto-generated method stub
-		return null;
+		return tipo;
 	}
 
-	@Override
 	public List<String> getEstaciones() {
-		// TODO Auto-generated method stub
-		return null;
+		return estaciones;
 	}
 
-	@Override
+	
 	public List<LocalTime> getHorasSalida() {
-		// TODO Auto-generated method stub
-		return null;
+		return horasSalida;
 	}
 
-	@Override
+	
 	public List<LocalTime> getHorasLlegada() {
-		// TODO Auto-generated method stub
-		return null;
+		return horasLlegada;
 	}
 
-	@Override
+	//Getters de las derivadas
 	public LocalTime getHoraSalida() {
-		// TODO Auto-generated method stub
-		return null;
+		return horasSalida.get(0);
 	}
 
-	@Override
+	
 	public LocalTime getHoraLlegada() {
-		// TODO Auto-generated method stub
-		return null;
+		return horasLlegada.get(horasLlegada.size()-1);
 	}
 
-	@Override
 	public Duration getDuracionTrayecto() {
-		// TODO Auto-generated method stub
-		return null;
+		Duration res= Duration.between(getHoraSalida(), getHoraLlegada());
+		return res;
 	}
+	
+	//toString
+	//TODO preguntar to String
+//	public String toString() {
+//		return getNombre()+"-"+getTipo()+"("+getCodigoTren()+")"+System.lineSeparator()+
+//				getEstaciones().get(0)+"	"+getHoraSalida()
+//	}
 
-	@Override
+	
+	
+	//Otras operaciones
+		//TODO Otras operaciones TRENES
 	public LocalTime getHoraSalida(String estacion) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public LocalTime getHoraLlegada(String estacion) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public void anadirEstacionIntermedia(int posicion, String estacion, LocalTime horaLlegada, LocalTime horaSalida) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
-	@Override
+	
 	public void eliminarEstacionIntermedia(String estacion) {
-		// TODO Auto-generated method stub
+		
 
+	}
+
+
+	//Criterio de ordenación.
+	public int compareTo(TrayectoTren tt) {
+		int res= getNombre().compareTo(tt.getNombre());
+		if (res==0) {
+			res=getHoraSalida().compareTo(tt.getHoraSalida());
+		}
+		return res;
+	}
+	
+	//Criterio de igualdad y hashCode().
+	public boolean equals(Object obj) {
+		boolean res=false;
+		if(obj instanceof TrayectoTrenImpl) {
+			TrayectoTrenImpl t1= (TrayectoTrenImpl) obj;
+			res= getNombre().equals(t1.getNombre()) && 
+					getHoraSalida().equals(t1.getHoraSalida())
+					&& getCodigoTren().equals(t1.getCodigoTren());
+			
+		}
+		return res;
+	}
+	
+	public int hashCode() {
+		return getNombre().hashCode() + 31* getHoraSalida().hashCode()
+				+31*31* getCodigoTren().hashCode();
 	}
 
 }
