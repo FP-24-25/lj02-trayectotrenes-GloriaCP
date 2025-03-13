@@ -2,6 +2,7 @@ package fp.trenes;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,11 +85,25 @@ public class TrayectoTrenImpl implements TrayectoTren,Comparable<TrayectoTren> {
 	}
 	
 	//toString
-	//TODO preguntar to String
-//	public String toString() {
-//		return getNombre()+"-"+getTipo()+"("+getCodigoTren()+")"+System.lineSeparator()+
-//				getEstaciones().get(0)+"	"+getHoraSalida()
-//	}
+	private String formateaHora(LocalTime hora) {
+	    if (hora != null) {
+	        return hora.format(DateTimeFormatter.ofPattern("HH:mm"));
+	    } else {
+	        return "";
+	    }
+	}
+	
+	//toString
+	
+	public String toString() {
+		String res=getNombre()+"-"+getTipo()+"("+getCodigoTren()+")/n";
+		for(int i=0; i<estaciones.size();i++) {
+			res= res+estaciones.add(nombre);
+			//no me sale poner las horas
+		}
+		return res;
+		
+	}
 
 	
 	
