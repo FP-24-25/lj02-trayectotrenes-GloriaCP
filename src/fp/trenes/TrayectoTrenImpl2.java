@@ -10,18 +10,16 @@ import java.util.List;
 import fp.utiles.Checkers;
 import fp.utiles.Validators;
 
-public class TrayectoTrenImpl implements TrayectoTren {
+public class TrayectoTrenImpl2 implements TrayectoTren {
 	
 	//Atributos
 	private String codigoTren;
 	private String nombre;
 	private TipoTren tipo;
-	private List <String> estaciones;
-	private List <LocalTime> horasSalida;
-	private List <LocalTime> horasLlegada;
+	private List<Parada> paradas;
 	
 	//Constructor(es)
-	public TrayectoTrenImpl(
+	public TrayectoTrenImpl2(
 			String codigoTren,
 			String nombre,
 			TipoTren tipo,
@@ -35,15 +33,13 @@ public class TrayectoTrenImpl implements TrayectoTren {
 		this.codigoTren=codigoTren;
 		this.nombre=nombre;
 		this.tipo=tipo;
-		Checkers.checkNoNull(horaSalida, horaLlegada);
-		Checkers.check("…", horaSalida.isBefore(horaLlegada));
-		this.estaciones=new ArrayList<>();
-		Collections.addAll(this.estaciones, estacionOrigen,estacionFinal);
-		this.horasSalida= new ArrayList<>();
-		Collections.addAll(this.horasSalida,horaSalida,null);
-		this.horasLlegada= new ArrayList<>();
-		Collections.addAll(this.horasLlegada,null,horaLlegada);
+		Parada estacionInicial= new Parada(estacionOrigen, horaSalida, null);
+		Parada estacionDestino= new Parada (estacionFinal,null,horaLlegada);
 		
+		
+		paradas=new ArrayList<Parada> ();
+		paradas.add(estacionInicial);
+		paradas.add(estacionDestino);	
 	}
 	
 	//TODO checkers
@@ -65,17 +61,32 @@ public class TrayectoTrenImpl implements TrayectoTren {
 	}
 
 	public List<String> getEstaciones() {
-		return new ArrayList<String> (estaciones);
+		List<String> estaciones= new ArrayList<>();
+		for(Parada p: paradas) {
+			estaciones.add(p.estacion());
+		}
+		return estaciones;
+	
 	}
 
 	
 	public List<LocalTime> getHorasSalida() {
-		return new ArrayList<LocalTime>(horasSalida);
+		List<LocalTime> hS= new ArrayList<>();
+		for(Parada p: paradas) {
+			hS.add(p.horaSalida());
+		}
+		return hS;
 	}
 
 	
 	public List<LocalTime> getHorasLlegada() {
-		return new ArrayList<LocalTime>(horasLlegada);
+		List<LocalTime> hL= new ArrayList<>();
+		for(Parada p: paradas) {
+			hL.add(p.horaSalida());
+		}
+		return hL;
+		
+		
 	}
 
 	//Getters de las derivadas
@@ -165,8 +176,8 @@ public class TrayectoTrenImpl implements TrayectoTren {
 	//Criterio de igualdad y hashCode().
 	public boolean equals(Object obj) {
 		boolean res=false;
-		if(obj instanceof TrayectoTrenImpl) {
-			TrayectoTrenImpl t1= (TrayectoTrenImpl) obj;
+		if(obj instanceof TrayectoTrenImpl2) {
+			TrayectoTrenImpl2 t1= (TrayectoTrenImpl2) obj;
 			res= getNombre().equals(t1.getNombre()) && 
 					getHoraSalida().equals(t1.getHoraSalida())
 					&& getCodigoTren().equals(t1.getCodigoTren());
