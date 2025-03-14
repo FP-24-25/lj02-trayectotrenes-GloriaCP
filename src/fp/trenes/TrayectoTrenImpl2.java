@@ -32,19 +32,16 @@ public class TrayectoTrenImpl2 implements TrayectoTren {
 				codigoTren.length()==5 && Validators.sonDigitos(codigoTren));
 		this.codigoTren=codigoTren;
 		this.nombre=nombre;
+		Checkers.checkNoNull(horaSalida, horaLlegada);
 		this.tipo=tipo;
 		Parada estacionInicial= new Parada(estacionOrigen, horaSalida, null);
 		Parada estacionDestino= new Parada (estacionFinal,null,horaLlegada);
-		
 		
 		paradas=new ArrayList<Parada> ();
 		paradas.add(estacionInicial);
 		paradas.add(estacionDestino);	
 	}
-	
-	//TODO checkers
-
-	
+		
 	//Getters
 	public String getCodigoTren() {
 		return codigoTren;
@@ -91,14 +88,20 @@ public class TrayectoTrenImpl2 implements TrayectoTren {
 
 	//Getters de las derivadas
 	public LocalTime getHoraSalida() {
-		return horasSalida.get(0);
-		//return horasSalida.getFirst();
+		LocalTime res=null;
+		for(Parada p:paradas) {
+			res=p.horaSalida();
+		}
+		return res;
 	}
 
 	
 	public LocalTime getHoraLlegada() {
-		return horasLlegada.get(horasLlegada.size()-1);
-		//return horasLlegada.getLast();
+		LocalTime res= null;
+		for(Parada p: paradas) {
+			res=p.horaLlegada();
+		}
+		return res;
 	}
 
 	public Duration getDuracionTrayecto() {
@@ -108,18 +111,20 @@ public class TrayectoTrenImpl2 implements TrayectoTren {
 	
 	public LocalTime getHoraSalida(String estacion) {
 		LocalTime res= null;
-		int pos=estaciones.indexOf(estacion);
-		if(pos>=0) {
-			res=horasSalida.get(pos);
+		for(Parada p: paradas) {
+			if (p.estacion().equals(estacion)) {
+				res=p.horaSalida();
+			}
 		}
 		return res;
 	}
 	
 	public LocalTime getHoraLlegada(String estacion) {
 		LocalTime res=null;
-		int pos=estaciones.indexOf(estacion);
-		if(pos>=0) {
-			res=horasLlegada.get(pos);
+		for(Parada p:paradas) {
+			if(p.estacion().equals(estacion)) {
+				res=p.horaLlegada();
+			}
 		}
 		return res;
 	}
@@ -136,10 +141,10 @@ public class TrayectoTrenImpl2 implements TrayectoTren {
 
 	public String toString() {
 		String res=getNombre()+"-"+getTipo()+"("+getCodigoTren()+")\n";
-		for(int i=0; i<estaciones.size();i++) {
-			res= "\t"+res+estaciones.get(i)+"\t"
-					+formateaHora(horasLlegada.get(i))+"\t"
-					+formateaHora(horasSalida.get(i))+"\n";
+		for(Parada p: paradas) {
+			res= res+p.estacion()+"\t"
+					+formateaHora(p.horaLlegada())+"\t"
+					+formateaHora(p.horaSalida())+"\n";
 		}
 		return res;
 		
@@ -148,17 +153,23 @@ public class TrayectoTrenImpl2 implements TrayectoTren {
 	
 	
 	//Otras operaciones
-		//TODO Otras operaciones TRENES
-
 	public void anadirEstacionIntermedia(int posicion, String estacion, LocalTime horaLlegada, LocalTime horaSalida) {
-		Checkers.check("La posicion intermedia no esta entre 1 y n", posicion>0 && posicion<estaciones.size());
+		Checkers.check("La posicion intermedia no esta entre 1 y n", posicion>0 && posicion<paradas.size());
 		Checkers.check("La hora de salida no es posterior a la de llegada", horaSalida.isAfter(horaLlegada));
-		Checkers.check("Hora llegada no es posterior a hora salida estacion anterior", null);
+		Checkers.check("Hora llegada tiene que ser posterior a hora salida de la estacion anterior", horaLlegada.isAfter(paradas.get(posicion-1).horaSalida()));
+		Checkers.check("Hora Salida es anterior a la hora de llegada de la siguiente estación", horaSalida.isBefore(paradas.get(posicion).horaLlegada()));
+		Parada p= new Parada(estacion,horaLlegada,horaSalida);
+		paradas.add(p);
 
 	}
 
 	
 	public void eliminarEstacionIntermedia(String estacion) {
+		Checkers.check("No puede ser la primera estacion",!(estacion.equals(paradas.getFirst().estacion())) );
+		Checkers.check("No puede ser la última estación", !(estacion.equals(paradas.getLast().estacion())));
+		Checkers.check("La estacion no está", paradas.contains(estacion));
+		paradas.remove(estacion);
+		
 		
 
 	}
